@@ -38,12 +38,12 @@ mood:        retrogaming + coca-cola + sports
 ```
 PID    PROCESS                            CPU%   STATUS
 ────────────────────────────────────────────────────────────────────
-0001   telegram-bot (multi-platform)      85%    [RUNNING 24/7]
-0002   rota-segura (UFRPE/PISI 2)         60%    [SPRINT 1]
-0003   umbrel-home-server                 45%    [STABLE]
-0004   daily-google-search-bot            10%    [DEVELOPING]
-0005   red-box-blog                       15%    [PUBLISHING]
-0006   freelance-pipeline (Upwork+others) 30%    [LISTENING]
+0001   fuuka-cata-link                    85%    [RUNNING 24/7]
+0002   DopamineToll                       45%    [PUBLISHED]
+0003   mytube                             60%    [DEVELOPING]
+0004   RailMood                           20%    [DEPLOYED]
+0005   rivalryBattleSimulator             30%    [STABLE]
+0006   dank-fyi                           10%    [LISTENING]
 ```
 
 ---
