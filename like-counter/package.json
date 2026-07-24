@@ -1,0 +1,7 @@
+{
+  "name": "dankhael-arcade-likes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tiny like-counter API for the DANKHAEL ARCADE profile heart button."
+}
