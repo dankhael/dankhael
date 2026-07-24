@@ -2,7 +2,7 @@
 
 <!-- ░▒▓ ANIMATED ARCADE CARD — click to open the live, interactive version ▓▒░ -->
 <a href="https://dankhael.github.io/dankhael/card/" title="Open the live interactive arcade">
-  <img src="assets/arcade-card.webp" width="640" alt="DANKHAEL ARCADE — hi there! welcome to my arcade (click to open the interactive version)">
+  <img src="assets/arcade-card.webp" width="760" alt="DANKHAEL ARCADE — hi there! welcome to my arcade (click to open the interactive version)">
 </a>
 
 </div>
