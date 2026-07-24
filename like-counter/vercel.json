@@ -2,6 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     { "source": "/like", "destination": "/api/like" },
-    { "source": "/likes.svg", "destination": "/api/badge" }
+    { "source": "/likes.svg", "destination": "/api/badge" },
+    { "source": "/count", "destination": "/api/count" },
+    { "source": "/hit", "destination": "/api/hit" }
   ]
 }

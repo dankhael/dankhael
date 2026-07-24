@@ -5,6 +5,9 @@ Tiny Vercel API behind the profile card's heart button.
 - `GET /like` → increments the counter, then 302-redirects back to your profile.
 - `GET /likes.svg` → a beating-heart SVG badge showing the current count (served
   with no-cache headers so GitHub's image proxy refreshes it as often as it allows).
+- `GET /count` → `{ "count": N }` (CORS) — read the count from the interactive card.
+- `POST /hit` → increments, returns `{ "count": N }` (CORS) — the interactive card's
+  heart button calls this so the number goes up live, without leaving the page.
 
 The counter lives in a Redis key `arcade_likes`. Any Upstash-compatible Redis works
 (Vercel's Marketplace "Upstash for Redis" injects the exact env vars this expects).
@@ -39,12 +42,21 @@ curl -i https://<your-domain>/like          # expect: 302 Location: https://gith
 open  https://<your-domain>/likes.svg       # the heart badge with the current number
 ```
 
-## Wire it into the profile README
+## Wire it into the interactive card
 
-In the root `README.md`, find the two `LIKES_DOMAIN` placeholders in the heart block
-and replace them with your deployed domain, e.g. `dankhael-arcade-likes.vercel.app`.
-Swap the badge image from the static `assets/heart-badge.svg` to the live
-`https://<your-domain>/likes.svg`. There's a comment there marking exactly what to change.
+The heart on the interactive card (`card/index.html`, served at
+`https://dankhael.github.io/dankhael/card/`) already counts up locally per-visitor
+(via `localStorage`). To make it a **global count shared by everyone**, deploy this API,
+then edit `card/index.html` — find:
+
+    var API = '';
+
+and set your deployed base URL:
+
+    var API = 'https://dankhael-arcade-likes.vercel.app';
+
+Commit + push. The card then reads `/count` on load and calls `/hit` on each click,
+so the number is shared across all visitors.
 
 ## Env vars
 

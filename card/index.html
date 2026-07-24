@@ -383,16 +383,116 @@ document.addEventListener('DOMContentLoaded', async function() {
   </script>
 
 <script>
-/* injected: hide the "minoism / README.md" title bar for a clean, interactive card */
+/* ==========================================================================
+   DANKHAEL ARCADE — interactive card enhancements (injected):
+   1) hide the "minoism / README.md" title bar
+   2) strip the white window frame -> show only the colored panel
+   3) make the heart clickable so the count goes up (localStorage demo now;
+      set API below to your deployed like-counter for a global shared count)
+   ========================================================================== */
 (function(){
-  try{ document.title = "DANKHAEL ARCADE"; }catch(e){}
-  function tryHide(){
-    var root=document.getElementById("dc-root"); if(!root) return false;
-    var win=root; while(win && win.childElementCount===1){ win=win.firstElementChild; }
-    if(win && win.childElementCount>=2){ win.children[0].style.display="none"; return true; }
-    return false;
+  try { document.title = 'DANKHAEL ARCADE'; } catch(e){}
+
+  /* ===== CONFIG: after you deploy like-counter/ to Vercel, put its base URL here
+     (e.g. 'https://dankhael-arcade-likes.vercel.app'). Leave '' for local-only demo. ===== */
+  var API = '';
+  var LS_KEY = 'dankhael_arcade_hearts';
+
+  function getWindow(){
+    var root = document.getElementById('dc-root'); if(!root) return null;
+    var win = root; while (win && win.childElementCount === 1) win = win.firstElementChild;
+    return (win && win.childElementCount >= 2) ? win : null;
   }
-  var n=0, iv=setInterval(function(){ if(tryHide()||++n>150) clearInterval(iv); },100);
+
+  function findPill(win){
+    // preferred: structural path (panel -> second child is the heart pill)
+    var panel = win.children[1] && win.children[1].children[0];
+    if (panel && panel.children[1] && /\d/.test(panel.children[1].textContent) &&
+        panel.children[1].textContent.trim().length <= 8) {
+      return panel.children[1];
+    }
+    // fallback: small element containing a heart glyph + a number
+    var els = win.querySelectorAll('*');
+    for (var i=0;i<els.length;i++){
+      var t = (els[i].textContent||'').trim();
+      if (/[\u2661\u2665\u2764]/.test(t) && /\d/.test(t) && t.length<=8 && els[i].querySelectorAll('*').length<=3) return els[i];
+    }
+    return null;
+  }
+
+  function numberTextNode(el){
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), n = null, node;
+    while ((node = w.nextNode())) { if (/\d/.test(node.nodeValue)) n = node; }
+    return n;
+  }
+
+  function setup(){
+    var win = getWindow(); if(!win) return false;
+
+    // (1) hide title bar
+    if (win.children[0]) win.children[0].style.display = 'none';
+    // (2) strip white frame
+    win.style.background = 'transparent';
+    win.style.boxShadow = 'none';
+    win.style.border = 'none';
+    if (win.children[1]) win.children[1].style.padding = '0';
+    // clear the dark "stage" that sat behind the white frame, then set a clean backdrop
+    var anc = win.parentElement;
+    while (anc && anc !== document.body) { anc.style.background = 'transparent'; anc.style.backgroundColor = 'transparent'; anc.style.boxShadow = 'none'; anc = anc.parentElement; }
+    document.documentElement.style.background = '#0a0818';
+    document.body.style.background = 'radial-gradient(1200px 800px at 50% 18%, #241d5c 0%, #120e2b 55%, #0a0818 100%)';
+    document.body.style.minHeight = '100vh';
+
+    // (3) wire the heart
+    var pill = findPill(win);
+    if (!pill) return true; // frame stripped even if the heart wasn't found
+    // drop any pre-existing click handler by cloning the node
+    var fresh = pill.cloneNode(true);
+    pill.parentNode.replaceChild(fresh, pill);
+    pill = fresh;
+    pill.style.cursor = 'pointer';
+    pill.style.userSelect = 'none';
+    pill.title = 'leave a heart';
+
+    function render(n){
+      var s = (typeof n === 'number') ? n.toLocaleString('en-US') : String(n);
+      var tn = numberTextNode(pill);
+      if (tn) tn.nodeValue = tn.nodeValue.replace(/\d[\d,]*/, s);
+      else pill.appendChild(document.createTextNode(' ' + s));
+    }
+
+    var shown = (pill.textContent.match(/\d[\d,]*/) || ['0'])[0].replace(/,/g,'');
+    var stored = parseInt(localStorage.getItem(LS_KEY) || '0', 10) || 0;
+    var current = Math.max(parseInt(shown,10) || 0, stored);
+    render(current);
+
+    var base = API ? API.replace(/\/$/, '') : '';
+    if (base) {
+      fetch(base + '/count').then(function(r){ return r.json(); })
+        .then(function(d){ if (d && typeof d.count === 'number'){ current = d.count; render(current); } })
+        .catch(function(){});
+    }
+
+    var busy = false;
+    pill.addEventListener('click', function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      current += 1; render(current);
+      try { localStorage.setItem(LS_KEY, String(current)); } catch(e){}
+      if (pill.animate) pill.animate([{transform:'scale(1)'},{transform:'scale(1.28)'},{transform:'scale(1)'}], {duration:260, easing:'ease-out'});
+      if (base && !busy) {
+        busy = true;
+        fetch(base + '/hit', { method:'POST' }).then(function(r){ return r.json(); })
+          .then(function(d){ if (d && typeof d.count === 'number'){ current = d.count; render(current); } })
+          .catch(function(){})
+          .then(function(){ busy = false; });
+      }
+    }, true);
+
+    return true;
+  }
+
+  var tries = 0;
+  var iv = setInterval(function(){ if (setup() || ++tries > 150) clearInterval(iv); }, 100);
 })();
 </script>
 </body>
