@@ -1,7 +1,13 @@
 <div align="center">
 
-<!-- ░▒▓ ANIMATED ARCADE CARD (the "screen") ▓▒░ -->
-<img src="assets/arcade-card.webp" width="860" alt="DANKHAEL ARCADE — hi there! welcome to my arcade">
+<!-- ░▒▓ ANIMATED ARCADE CARD — click to open the live, interactive version ▓▒░ -->
+<a href="https://dankhael.github.io/dankhael/card/" title="Open the live interactive arcade">
+  <img src="assets/arcade-card.webp" width="640" alt="DANKHAEL ARCADE — hi there! welcome to my arcade (click to open the interactive version)">
+</a>
+
+<br/>
+
+<a href="https://dankhael.github.io/dankhael/card/"><sub>▶ click the card to open the live, interactive version ↗</sub></a>
 
 <br/><br/>
 
